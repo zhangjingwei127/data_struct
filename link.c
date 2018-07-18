@@ -1,171 +1,179 @@
-#include <stdio.h>
-#include <malloc.h>
-
-typedef struct ListNode
+#include<stdio.h>
+#include<malloc.h>
+typedef struct Node
 {
 	int data;
-	struct ListNode* next;
+	struct Node* next;
 }List,*LPList;
-//struct ListNode == List
-//struct ListNode* == LPList
+
 LPList createList()
 {
 	LPList head = (LPList)malloc(sizeof(List));
-	//head->data = 0;
-	head->next = NULL;
-	return head;
+	if(head != NULL)
+	{
+		head->next = NULL;
+		return head;
+	}
+	printf("分配头内存失败\n");
+	return NULL;
 }
+
 LPList createNode(int data)
 {
-	LPList newnode = (LPList)malloc(sizeof(List));
-	newnode->data = data;
-	newnode->next = NULL;
-	return newnode;
+	LPList newNode = (LPList)malloc(sizeof(List));
+	if(newNode != NULL)
+	{
+		newNode->data = data;
+		newNode->next = NULL;
+		return newNode;
+	}
+	printf("分配结点内存失败\n");
+	return NULL;
 }
-void boolNULL(LPList list)
+
+int boolNULL(LPList list)
 {
-	LPList frontNode = list;
-	LPList posDataNode = list->next;
 	if(list->next == NULL)
 	{
-		printf("list is NULL");
-		return;
+		printf("list is NULL.\n");
+		return 1;
 	}
+	else
+		return 0;
 }
+
 void insertNodeByHead(LPList list,int data)
-{
-	LPList newnode = createNode(data);
-	newnode->next = list->next;
-	list->next = newnode;
-}
-void insertNodeByAppion(LPList list,int data,int posData)
-{
-	LPList frontNode = list;
-	LPList posDataNode = list->next;
-	if(posDataNode == NULL)
-	{
-		printf("No find aim,no way insert!");
-		return;
-	}
-	while(posDataNode != NULL && posDataNode->data != posData)
-	{
-		frontNode = posDataNode;
-		posDataNode = posDataNode->next;
-		if(posDataNode == NULL)
-		{
-			printf("No find aim,no way insert!");
-			return;
-		}
-	}
-	
-	LPList newNode = createNode(data);
-	newNode->next = posDataNode;
-	frontNode->next = newNode;
-	return;
-}
-void insertNodeByTail(LPList list,int data)
-{
-	LPList frontNode = list;
-	LPList posDataNode = list->next;
-	if(posDataNode == NULL)
-	{
-		printf("NULL,no way insert!");
-		return;
-	}
-	while(posDataNode != NULL )
-	{
-		frontNode = posDataNode;
-		posDataNode = posDataNode->next;
-	}
-	
-	LPList newNode = createNode(data);
-	frontNode->next = newNode;
-	return;
-}
-void deleteNodeByHead(LPList list)
-{
-	boolNULL(list);
-	LPList firstNode = list;
-	LPList secondNode = list->next; 
-	if(secondNode->next == NULL)
-	{
-		list->next == NULL;
-		free(secondNode);
-		return;
-	}
-	list->next = secondNode->next;
-	secondNode->next = NULL;
-	free(secondNode);
-}
-void deleteNodeByTail(LPList list)
 {
 	LPList firstNode = list;
 	LPList secondNode = list->next;
-	boolNULL(list);
+	LPList newNode = createNode(data);
+	list->next = newNode;
+	newNode->next = secondNode;
+}
+
+void insertNodeByTail(LPList list,int data)
+{
+	LPList firstNode = list;
+	LPList secondNode = list->next;
+	while(secondNode)
+	{
+		firstNode = secondNode;
+		secondNode = secondNode->next;
+	}
+	LPList newNode = createNode(data);
+	firstNode->next = newNode;
+}
+
+void insertNodeByFrontAimData(LPList list,int aimData,int data)
+{
+	if(boolNULL(list))
+	{
+		return;
+	}
+	LPList firstNode = list;
+	LPList secondNode = list->next;
+	while(secondNode)
+	{
+		if(secondNode->data == aimData)
+		{
+			LPList newNode = createNode(data);
+			firstNode->next = newNode;
+			newNode->next = secondNode;
+			return;
+		}
+		firstNode = secondNode;
+		secondNode = secondNode->next;
+	}
+	printf("No find aimData,don't insert.\n");
+	return;
+}
+			
+void deleteNodeByHead(LPList list)
+{
+	if(boolNULL(list))
+	{
+		return;
+	}
+	LPList firstNode = list;
+	LPList secondNode = list->next;
+	firstNode->next = secondNode->next;
+	free(secondNode);
+}
+
+void deleteNodeByTail(LPList list)
+{
+	if(boolNULL(list))
+	{
+		return;
+	}
+	LPList firstNode = list;
+	LPList secondNode = list->next;
 	while(secondNode->next)
 	{
 		firstNode = secondNode;
 		secondNode = secondNode->next;
 	}
-	free(secondNode);
 	firstNode->next = NULL;
+	free(secondNode);
+	return;
 }
-void deleteNodeByAppion(LPList list,int posData)
+
+void deleteNodeByAimData(LPList list,int aimData)
 {
-	boolNULL(list);
+	if(boolNULL(list))
+	{
+		return;
+	}
 	LPList firstNode = list;
 	LPList secondNode = list->next;
 	while(secondNode)
 	{
-		if(secondNode->data == posData)
+		if(secondNode->data == aimData)
 		{
 			firstNode->next = secondNode->next;
-			secondNode->next = NULL;
 			free(secondNode);
 			return;
 		}
 		firstNode = secondNode;
 		secondNode = secondNode->next;
 	}
-	printf("No find posData!\n");
+	printf("No find aimData node,don't delete.\n");
 	return;
 }
-	
-void printList(LPList list)
+
+void print(LPList list)
 {
-	LPList nextNode = list->next;
-	while(nextNode)
+	LPList node = list->next;
+	if(boolNULL(list))
 	{
-		printf("%d\t",nextNode->data);
-		nextNode = nextNode->next;
+		return;
+	}
+	while(node)
+	{
+		printf("%d\t",node->data);
+		node = node->next;
 	}
 	printf("\n");
 }
 int main()
 {
 	LPList list = createList();
-	insertNodeByHead(list,1);
-	insertNodeByHead(list,2);
+	insertNodeByHead(list,5);
 	insertNodeByHead(list,4);
-	printList(list);
-	insertNodeByAppion(list,3,2);
-    insertNodeByAppion(list,5,4);
-	printList(list);
-	deleteNodeByAppion(list,3);
-	insertNodeByTail(list,0);
-	printList(list);
+	insertNodeByHead(list,2);
+	print(list);
+	insertNodeByFrontAimData(list,4,3);
+	insertNodeByFrontAimData(list,2,1);
+	print(list);
+	insertNodeByTail(list,6); 
+	print(list);
 	deleteNodeByHead(list);
-	printList(list);
-	for(int num = 0;num < 2;++num)
-	{
-		deleteNodeByHead(list);
-	}
-	printList(list);
+	print(list);
 	deleteNodeByTail(list);
-	printList(list);
-	deleteNodeByAppion(list,2);
-	printList(list);
-	deleteNodeByAppion(list,1);
-	printList(list);
+	print(list);
+	deleteNodeByAimData(list,4);
+	print(list);
+	deleteNodeByAimData(list,9);
+	print(list);
 	return 0;
 }
