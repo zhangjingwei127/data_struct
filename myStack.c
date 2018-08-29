@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<malloc.h>
 
 struct stack
 {
@@ -6,7 +7,7 @@ struct stack
   int topIndex = -1;
 }
 
-
+stack 
 
 int main()
 {
